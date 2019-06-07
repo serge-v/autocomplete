@@ -10,8 +10,20 @@ import (
 	"strings"
 )
 
-// Init ensures that .batchrc file contains autocomplete init statement.
-func Init(file, script string) {
+var acFlag = flag.Bool("c", false, "autocomplete parameters")
+
+func init() {
+	prog := os.Args[0]
+	if prog == "" {
+		return
+	}
+
+	script := fmt.Sprintf(`complete -C "%s -c" %s`, prog, prog)
+	file := fmt.Sprintf("%s/.config/bash_completion/%s", os.Getenv("HOME"), prog)
+	addBashStatement(file, script)
+}
+
+func addBashStatement(file, script string) {
 	if err := os.MkdirAll(filepath.Dir(file), 0755); err != nil {
 		panic(err)
 	}
@@ -62,8 +74,16 @@ func Handle(name string, h Handler) {
 	handlers[name] = h
 }
 
-// Print prints possible autocompletions.
-func Print() {
+// HandleArgs prints autocompletion variants if -c flag is set and then program exits.
+func HandleArgs() {
+	if *acFlag {
+		printCompletions()
+		os.Exit(0)
+		return
+	}
+}
+
+func printCompletions() {
 	lastarg := flag.Arg(flag.NArg() - 1)
 	lastpar := flag.Arg(flag.NArg() - 2)
 
