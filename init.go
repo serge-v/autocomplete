@@ -17,7 +17,7 @@ func init() {
 	if prog == "" {
 		return
 	}
-
+	prog = filepath.Base(prog)
 	script := fmt.Sprintf(`complete -C "%s -c" %s`, prog, prog)
 	file := fmt.Sprintf("%s/.config/bash_completion/%s", os.Getenv("HOME"), prog)
 	addBashStatement(file, script)
