@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -25,7 +26,8 @@ func init() {
 
 func addBashStatement(file, script string) {
 	if err := os.MkdirAll(filepath.Dir(file), 0755); err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 
 	actext, _ := ioutil.ReadFile(file)
